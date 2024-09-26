@@ -17,12 +17,12 @@ const StoreCache: React.FC<StoreCacheProps> = ({ children }) => {
 
   const apiEndpoints: Record<string, string> = {
     sb: `${baseUrl}/sb/`,
-    // mac: `${baseUrl}/mac/`,
-    // mks: `${baseUrl}/mks/`,
-    // mpdc: `${baseUrl}/mpdc/`,
-    // mpl: `${baseUrl}/mpl/`,
-    // mpv: `${baseUrl}/mpv/`,
-    // mpk: `${baseUrl}/mpk/`,
+    mac: `${baseUrl}/mac/`,
+    mks: `${baseUrl}/mks/`,
+    mpdc: `${baseUrl}/mpdc/`,
+    mpl: `${baseUrl}/mpl/`,
+    mpv: `${baseUrl}/mpv/`,
+    mpk: `${baseUrl}/mpk/`,
   };
 
   useEffect(() => {
