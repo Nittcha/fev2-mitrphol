@@ -26,30 +26,36 @@ const StoreCache: React.FC<StoreCacheProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    const fetchIncrementally = async () => {
-      const fetchedData: Record<string, GeneralResponse> = {};
-
-      for (const [key, url] of Object.entries(apiEndpoints)) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch from ${url}: ${response.statusText}`);
+    const fetchAllData = async () => {
+      try {
+        const fetchPromises = Object.entries(apiEndpoints).map(
+          async ([key, url]) => {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`Failed to fetch from ${url}: ${response.statusText}`);
+            }
+            const responseData: GeneralResponse = await response.json();
+            return { key, data: responseData };
           }
-          const responseData: GeneralResponse = await response.json();
-          fetchedData[key] = responseData;
+        );
 
-          // อัปเดตข้อมูลใน state หลังจากดึงข้อมูลแต่ละครั้ง
-          setData((prevData) => ({ ...prevData, [key]: responseData }));
-        } catch (err) {
-          const errorMessage = (err as Error).message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ';
-          setError(errorMessage);
-        }
+        const results = await Promise.all(fetchPromises);
+        const fetchedData: Record<string, GeneralResponse> = {};
+
+        results.forEach(({ key, data }) => {
+          fetchedData[key] = data;
+        });
+
+        setData(fetchedData);
+        setLoading(false);
+      } catch (err) {
+        const errorMessage = (err as Error).message || 'An unknown error occurred';
+        setError(errorMessage);
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
-    fetchIncrementally(); 
+    fetchAllData(); 
   }, []);
 
   return (
